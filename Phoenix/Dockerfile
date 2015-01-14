@@ -1,29 +1,31 @@
 FROM ubuntu:14.04
 MAINTAINER Zohaib Rauf <zabirauf@gmail.com>
 
-#RUN echo "deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse" >> /etc/apt/sources.list
-#RUN echo "deb http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe multiverse" >> /etc/apt/sources.list
-#RUN echo "deb http://archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse" >> /etc/apt/sources.list
-#RUN echo "deb http://archive.ubuntu.com/ubuntu/ trusty-proposed main restricted universe multiverse" >> /etc/apt/sources.list
-#RUN echo "deb http://archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list
+# Setting locale as Elixir is choosy about it
+RUN locale-gen en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 
 RUN apt-get update && apt-get -y install wget curl
 
-#RUN apt-get -y install software-properties-common && add-apt-repository universe
-
 RUN echo "deb http://packages.erlang-solutions.com/ubuntu precise contrib" >> /etc/apt/sources.list
 
-RUN mkdir ~/Downloads
-WORKDIR ~/Downloads
+RUN mkdir /Downloads
+WORKDIR /Downloads
 
 RUN wget http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
 RUN apt-key add erlang_solutions.asc
-RUN apt-get update && apt-get -y install erlang git && mkdir ~/Applications
-WORKDIR ~/Applications
+RUN apt-get update && apt-get -y install erlang git make gcc g++ && mkdir /Applications
 
+WORKDIR /Applications
 RUN git clone https://github.com/elixir-lang/elixir.git
+WORKDIR elixir
 
-WORKDIR ~/Applications/elixir
+RUN git checkout v1.0.2 && make clean test && mkdir /Project
 
-RUN make clean test
+ENV PATH $PATH:/Applications/elixir/bin
+WORKDIR /Project
+RUN git clone https://github.com/phoenixframework/phoenix.git && cd phoenix && git checkout v0.8.0 && mix do local.hex --force, local.rebar, deps.get, compile
 
+EXPOSE 4000
