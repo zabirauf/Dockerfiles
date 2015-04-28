@@ -12,5 +12,5 @@ RUN apt-get update && apt-get -y install wget curl git g++ libssl-dev libncurses
 RUN mkdir ~/.nerves-cache; mkdir /Downloads
 WORKDIR /Downloads
 
-RUN git clone https://github.com/nerves-project/nerves-sdk.git; cd nerves-sdk; make nerves_rpi_defconfig
+RUN git clone https://github.com/nerves-project/nerves-sdk.git; cd nerves-sdk; make nerves_rpi_elixir_defconfig
 RUN cd nerves-sdk; make
