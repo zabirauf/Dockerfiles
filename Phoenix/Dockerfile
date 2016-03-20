@@ -22,10 +22,10 @@ WORKDIR /Applications
 RUN git clone https://github.com/elixir-lang/elixir.git
 WORKDIR elixir
 
-RUN git checkout v1.0.2 && make clean test && mkdir /Project
+RUN git checkout v1.2 && make clean test && mkdir /Project
 
 ENV PATH $PATH:/Applications/elixir/bin
-WORKDIR /Project
-RUN git clone https://github.com/phoenixframework/phoenix.git && cd phoenix && git checkout v0.8.0 && mix do local.hex --force, local.rebar, deps.get, compile
+WORKDIR /Prcject
+RUN mix local.hex --force && mix archive.install https://github.com/phoenixframework/archives/raw/master/phoenix_new.ez --force
 
 EXPOSE 4000
